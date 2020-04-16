@@ -1,4 +1,9 @@
 # Test example
+
+variable "environment_prefix"{
+
+}
+
 variable "external_network_id" {
   default = "893a5b59-081a-4e3a-ac50-1e54e262c3fa"
 }
@@ -41,7 +46,7 @@ provider "openstack" {
 
 
 # Now add ssh public key so we can access the resource --// todo move public key to a variable
-resource "openstack_compute_keypair_v2" "bastion-keypair" {
+resource "openstack_compute_keypair_v2" "${environment_prefix}_bastion-keypair" {
   name       = "bastion-keypair"
   public_key = file(var.bastion_public_key_file)
 }
