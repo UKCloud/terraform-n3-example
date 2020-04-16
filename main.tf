@@ -36,11 +36,6 @@ variable "bastion_private_key_file" {
 # Configure the OpenStack Provider
 provider "openstack" {
   # no need to define anything cos it gets pulled via the shell environments
-  auth_url = "https://cor00005.cni.ukcloud.com:13000/v2.0"
-  user_name   = "tlawrence@ukcloud.com"
-  tenant_name = "Tim_Demo"
-  password    = "diesel8005SK!3"
-  region      = "regionOne"
 }
 
 
