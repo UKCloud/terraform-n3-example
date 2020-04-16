@@ -7,7 +7,7 @@ resource "openstack_networking_network_v2" "internet_dmz" {
 # Create a subnet for internet_dmz network
 resource "openstack_networking_subnet_v2" "internet_dmz" {
   name       = "internet_dmz"
-  network_id = "${openstack_networking_network_v2.internet_dmz.id}"
+  network_id = openstack_networking_network_v2.internet_dmz.id
   cidr       = "172.16.0.0/24"
   ip_version = 4
   dns_nameservers = ["8.8.8.8", "8.8.4.4"]
@@ -16,7 +16,7 @@ resource "openstack_networking_subnet_v2" "internet_dmz" {
 # Define a router to connect to the internet
 resource "openstack_networking_router_v2" "www" {
   name             = "${var.internet_router_name}"
-  external_gateway = "${var.external_gateway}"
+  external_network_id = "${var.external_network_id}"
 }
 
 # Now connect the www router to the www_dmz network using an interface
@@ -70,5 +70,5 @@ resource "openstack_networking_subnet_v2" "n3_app" {
 # Define a router to connect to the n3 
 resource "openstack_networking_router_v2" "n3" {
   name             = "${var.n3_router_name}"
-  #external_gateway = "${var.n3_gateway}"
+  #external_network_id = "${var.n3_network_id}"
 }

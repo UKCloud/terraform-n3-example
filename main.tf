@@ -1,9 +1,9 @@
 # Test example
-variable "external_gateway" {
+variable "external_network_id" {
   default = "893a5b59-081a-4e3a-ac50-1e54e262c3fa"
 }
 
-variable "n3_gateway" {
+variable "n3_network_id" {
   default = "893a5b59-081a-4e3a-ac50-1e54e262c3fa"
 }
 
@@ -31,6 +31,11 @@ variable "bastion_private_key_file" {
 # Configure the OpenStack Provider
 provider "openstack" {
   # no need to define anything cos it gets pulled via the shell environments
+  auth_url = "https://cor00005.cni.ukcloud.com:13000/v2.0"
+  user_name   = "tlawrence@ukcloud.com"
+  tenant_name = "Tim_Demo"
+  password    = "diesel8005SK!3"
+  region      = "regionOne"
 }
 
 
@@ -38,7 +43,7 @@ provider "openstack" {
 # Now add ssh public key so we can access the resource --// todo move public key to a variable
 resource "openstack_compute_keypair_v2" "bastion-keypair" {
   name       = "bastion-keypair"
-  public_key = "${file(var.bastion_public_key_file)}"
+  public_key = file(var.bastion_public_key_file)
 }
 
 resource "openstack_compute_keypair_v2" "secret-keypair" {

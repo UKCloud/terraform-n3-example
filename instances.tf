@@ -1,22 +1,22 @@
 #Create BASTION Instance
 resource "openstack_compute_instance_v2" "bastion" {
-  depends_on      = ["openstack_networking_subnet_v2.n3_dmz"]
+  depends_on      = [openstack_networking_subnet_v2.n3_dmz]
   name            = "bastion"
   image_id        = "c09aceb5-edad-4392-bc78-197162847dd1"
   flavor_name       = "t1.tiny"
-  key_pair        = "${openstack_compute_keypair_v2.bastion-keypair.name}"
+  key_pair        = openstack_compute_keypair_v2.bastion-keypair.name
   security_groups = ["default", "${openstack_compute_secgroup_v2.n3_demo_ssh.name}"]
 
-  metadata {
+  metadata = {
     this = "centos 72 base"
   }
 
   network {
-    name = "${openstack_networking_network_v2.internet_dmz.name}"
+    name = openstack_networking_network_v2.internet_dmz.name
   }
 
   network {
-    name = "${openstack_networking_network_v2.n3_dmz.name}"
+    name = openstack_networking_network_v2.n3_dmz.name
     fixed_ip_v4 = "172.16.1.10"
   }
 }
@@ -27,10 +27,10 @@ resource "null_resource" "bastion_config" {
       source = "./config/secret-key.pem"
       destination = "/home/centos/.ssh/id_rsa"
       connection {
-        host = "${openstack_networking_floatingip_v2.floatip_1.address}"
+        host = openstack_networking_floatingip_v2.floatip_1.address
         user = "centos"
         timeout = "1m"
-        private_key = "${file(var.bastion_private_key_file)}"
+        private_key = file(var.bastion_private_key_file)
       }
     }
 
@@ -49,10 +49,10 @@ resource "null_resource" "bastion_config" {
         "sudo sh -c 'service network restart'"
       ]
       connection {
-        host = "${openstack_networking_floatingip_v2.floatip_1.address}"
+        host = openstack_networking_floatingip_v2.floatip_1.address
         user = "centos"
         timeout = "1m"
-        private_key = "${file(var.bastion_private_key_file)}"
+        private_key = file(var.bastion_private_key_file)
       }
     }
 
@@ -62,10 +62,10 @@ resource "null_resource" "bastion_config" {
         "chmod 0600 ~/.ssh/id_rsa"
       ]
       connection {
-        host = "${openstack_networking_floatingip_v2.floatip_1.address}"
+        host = openstack_networking_floatingip_v2.floatip_1.address
         user = "centos"
         timeout = "1m"
-        private_key = "${file(var.bastion_private_key_file)}"
+        private_key = file(var.bastion_private_key_file)
       }
   }
 
@@ -78,26 +78,26 @@ resource "openstack_networking_floatingip_v2" "floatip_1" {
 
 # Now associate the public ip with our instance
 resource "openstack_compute_floatingip_associate_v2" "fip_1" {
-  floating_ip = "${openstack_networking_floatingip_v2.floatip_1.address}"
-  instance_id = "${openstack_compute_instance_v2.bastion.id}"
+  floating_ip = openstack_networking_floatingip_v2.floatip_1.address
+  instance_id = openstack_compute_instance_v2.bastion.id
 
 }
 
 
 # Create an N3 connected instance
 resource "openstack_compute_instance_v2" "app" {
-  depends_on      = ["openstack_networking_subnet_v2.n3_app"]
+  depends_on      = [openstack_networking_subnet_v2.n3_app]
   name            = "app"
   image_id        = "c09aceb5-edad-4392-bc78-197162847dd1"
   flavor_name       = "t1.tiny"
-  key_pair        = "${openstack_compute_keypair_v2.secret-keypair.name}"
+  key_pair        = openstack_compute_keypair_v2.secret-keypair.name
   security_groups = ["default", "${openstack_compute_secgroup_v2.n3_demo_ssh.name}"]
 
-  metadata {
+  metadata = {
     this = "centos 72 base"
   }
 
   network {
-    name = "${openstack_networking_network_v2.n3_app.name}"
+    name = openstack_networking_network_v2.n3_app.name
   }
 }
