@@ -36,6 +36,7 @@ variable "bastion_private_key_file" {
 # Configure the OpenStack Provider
 provider "openstack" {
   # no need to define anything cos it gets pulled via the shell environments
+  cloud = "corsham"
 }
 
 
