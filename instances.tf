@@ -46,7 +46,8 @@ resource "null_resource" "bastion_config" {
         "sudo sh -c 'echo \"USERCTL=\"no\"\"  >> /etc/sysconfig/network-scripts/ifcfg-eth1'",
         "sudo sh -c 'echo \"IPV6INIT=\"no\"\"  >> /etc/sysconfig/network-scripts/ifcfg-eth1'",
 
-        "sudo sh -c 'service network restart'"
+        "sudo sh -c 'service network restart'",
+        "sudo sh -c 'route add -net 172.16.2.0/24 gw 172.16.1.1'"
       ]
       connection {
         host = openstack_networking_floatingip_v2.floatip_1.address
@@ -83,6 +84,16 @@ resource "openstack_compute_floatingip_associate_v2" "fip_1" {
 
 }
 
+resource "openstack_networking_floatingip_v2" "floatip_2" {
+  pool = "internet"
+}
+
+# Now associate the public ip with our instance
+resource "openstack_compute_floatingip_associate_v2" "fip_2" {
+  floating_ip = openstack_networking_floatingip_v2.floatip_2.address
+  instance_id = openstack_compute_instance_v2.app.id
+
+}
 
 # Create an N3 connected instance
 resource "openstack_compute_instance_v2" "app" {
@@ -91,7 +102,7 @@ resource "openstack_compute_instance_v2" "app" {
   image_id        = "c09aceb5-edad-4392-bc78-197162847dd1"
   flavor_name       = "t1.tiny"
   key_pair        = openstack_compute_keypair_v2.secret-keypair.name
-  security_groups = ["default", "${openstack_compute_secgroup_v2.n3_demo_ssh.name}"]
+  security_groups = ["default", "${openstack_compute_secgroup_v2.restricted_ssh.name}",openstack_compute_secgroup_v2.http_group.name]
 
   metadata = {
     this = "centos 72 base"

@@ -67,6 +67,17 @@ resource "openstack_compute_secgroup_v2" "n3_demo_ssh" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "restricted_ssh" {
+  name        = "${var.environment_prefix}_restricted_ssh"
+  description = "ssh rules for n3 terraform demo"
+  rule {
+    from_port   = 22
+    to_port     = 22
+    ip_protocol = "tcp"
+    cidr        = "172.16.1.10/32"
+  }
+}
+
 # Now declare security group with http ports open - 80 and 443
 resource "openstack_compute_secgroup_v2" "http_group" {
   name        = "${var.environment_prefix}_http_group"
@@ -119,4 +130,15 @@ resource "openstack_compute_secgroup_v2" "http_group" {
 
 
 
+output "bastion_ip_address" {
+  value       = "${var.environment_prefix} Bastion Login: ssh centos@${openstack_networking_floatingip_v2.floatip_1.address}"
+}
+
+output "app_server_ip_address" {
+  value	      = "${var.environment_prefix} App Server Login (from Bastion host):  ssh centos@${openstack_compute_instance_v2.app.network.0.fixed_ip_v4}"
+}
+
+output "app_server_public_ip" {
+  value       = "${var.environment_prefix} App Tester IP: http://${openstack_networking_floatingip_v2.floatip_2.address}"
+}
 

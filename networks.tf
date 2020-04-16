@@ -37,6 +37,8 @@ resource "openstack_networking_router_interface_v2" "router_interface_3" {
   subnet_id = "${openstack_networking_subnet_v2.n3_app.id}"
 }
 
+
+
 # Define our N3_DMZ network
 resource "openstack_networking_network_v2" "n3_dmz" {
   name           = "${var.environment_prefix}_n3_dmz"
@@ -70,5 +72,5 @@ resource "openstack_networking_subnet_v2" "n3_app" {
 # Define a router to connect to the n3 
 resource "openstack_networking_router_v2" "n3" {
   name             = "${var.environment_prefix}_${var.n3_router_name}"
-  #external_network_id = "${var.n3_network_id}"
+  external_network_id = "${var.external_network_id}"
 }
