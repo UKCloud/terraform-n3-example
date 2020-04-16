@@ -46,13 +46,13 @@ provider "openstack" {
 
 
 # Now add ssh public key so we can access the resource --// todo move public key to a variable
-resource "openstack_compute_keypair_v2" "${environment_prefix}_bastion-keypair" {
-  name       = "bastion-keypair"
+resource "openstack_compute_keypair_v2" "bastion-keypair" {
+  name       = "${var.environment_prefix}_bastion-keypair"
   public_key = file(var.bastion_public_key_file)
 }
 
 resource "openstack_compute_keypair_v2" "secret-keypair" {
-  name       = "secret-keypair"
+  name       = "${var.environment_prefix}_secret-keypair"
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCue01B/2Yzhz2y33HD3yn2dmid8Eh81jvUcwAv5dqyQODefqrR+znv9GxYdf43+Syy/Lz8XMVv1FNKdYKQ3SL9aPT4CL/by9cCF6hjOkqrGpCIxdI7q7aZpznlItcq+XyHqRHaab7Mj4GrU1SoWCpFiogU5Oxw0AvMb4fZyA7dsKr8adr6Ply1CZEsXbseSW5a7uAdpDidQn2jW7rFyxmi2uy/6y6aNzBqcz/zco8lk6nTdja0sAH44BzJK/fzrsNMlZrgSZRfy938mez7tfUmILr4zd07aQ3wSoToRJRn1yxJSBXOklXkJMLhnTGi8xj3a9wpVuH9t6SMP8m+7XoB"
 }
 
@@ -61,7 +61,7 @@ resource "openstack_compute_keypair_v2" "secret-keypair" {
 
 # Now declare security group with default ports open
 resource "openstack_compute_secgroup_v2" "n3_demo_ssh" {
-  name        = "n3_demo_ssh"
+  name        = "${var.environment_prefix}_n3_demo_ssh"
   description = "ssh rules for n3 terraform demo"
   rule {
     from_port   = 22
@@ -73,7 +73,7 @@ resource "openstack_compute_secgroup_v2" "n3_demo_ssh" {
 
 # Now declare security group with http ports open - 80 and 443
 resource "openstack_compute_secgroup_v2" "http_group" {
-  name        = "http_group"
+  name        = "${var.environment_prefix}_http_group"
   description = "Http only group"
 
   rule {

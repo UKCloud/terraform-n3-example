@@ -1,7 +1,7 @@
 #Create BASTION Instance
 resource "openstack_compute_instance_v2" "bastion" {
   depends_on      = [openstack_networking_subnet_v2.n3_dmz]
-  name            = "bastion"
+  name            = "${var.environment_prefix}_bastion"
   image_id        = "c09aceb5-edad-4392-bc78-197162847dd1"
   flavor_name       = "t1.tiny"
   key_pair        = openstack_compute_keypair_v2.bastion-keypair.name
@@ -87,7 +87,7 @@ resource "openstack_compute_floatingip_associate_v2" "fip_1" {
 # Create an N3 connected instance
 resource "openstack_compute_instance_v2" "app" {
   depends_on      = [openstack_networking_subnet_v2.n3_app]
-  name            = "app"
+  name            = "${var.environment_prefix}_app"
   image_id        = "c09aceb5-edad-4392-bc78-197162847dd1"
   flavor_name       = "t1.tiny"
   key_pair        = openstack_compute_keypair_v2.secret-keypair.name
